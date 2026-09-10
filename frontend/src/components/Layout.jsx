@@ -1,4 +1,4 @@
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function Layout() {
@@ -20,7 +20,34 @@ export default function Layout() {
                 backgroundColor: '#333',
                 color: 'white',
             }}>
-                <h3 style={{ margin: 0 }}>Flooring Portal</h3>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                    <h3 style={{ margin: 0 }}>
+                        <Link to="/dashboard" style={{ color: 'white', textDecoration: 'none' }}>
+                            Flooring Portal
+                        </Link>
+                    </h3>
+
+                    <Link to="/new-estimate" style={{ color: '#ccc', textDecoration: 'none' }}>
+                        New Estimate
+                    </Link>
+
+                    <Link to="/my-clients" style={{ color: '#ccc', textDecoration: 'none' }}>
+                        My Clients
+                    </Link>
+
+                    {(user?.role === 'manager' || user?.role === 'admin') && (
+                        <Link to="/manage-services" style={{ color: '#ccc', textDecoration: 'none' }}>
+                            Manage Services
+                        </Link>
+                    )}
+
+                    {user?.role === 'admin' && (
+                        <Link to="/manage-users" style={{ color: '#ccc', textDecoration: 'none' }}>
+                            Manage Users
+                        </Link>
+                    )}
+                </div>
+
                 <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
                     <span>{user?.username} ({user?.role})</span>
                     <button

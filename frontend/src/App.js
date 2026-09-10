@@ -5,6 +5,13 @@ import Layout from './components/Layout';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import EmployeeDashboard from './pages/EmployeeDashboard';
+import ManagerDashboard from './pages/ManagerDashboard';
+import AdminDashboard from './pages/AdminDashboard';
+import NewEstimate from './pages/NewEstimate';
+import MyClients from './pages/MyClients';
+import ManageServices from './pages/ManageServices';
+import ManageUsers from './pages/ManageUsers';
 
 export default function App() {
     return (
@@ -23,6 +30,13 @@ export default function App() {
                     >
                         <Route index element={<Navigate to="/dashboard" />} />
                         <Route path="dashboard" element={<Dashboard />} />
+                        <Route path="employee-dashboard" element={<EmployeeDashboard />} />
+                        <Route path="manager-dashboard" element={<ManagerDashboard />} />
+                        <Route path="admin-dashboard" element={<AdminDashboard />} />
+                        <Route path="new-estimate" element={<NewEstimate />} />
+                        <Route path="my-clients" element={<MyClients />} />
+                        <Route path="manage-services" element={<ManageServices />} />
+                        <Route path="manage-users" element={<ManageUsers />} />
                     </Route>
                 </Routes>
             </AuthProvider>
