@@ -1,6 +1,6 @@
 from django.urls import path
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from .views import Register, Profile 
+from .views import Register, Profile, UserList, UserDetail
 
 urlpatterns = [
     # POST - send username & password, get back a token
@@ -14,4 +14,11 @@ urlpatterns = [
 
     # GET - send a token, get back your own user info
     path('me/', Profile.as_view(), name='me'),
+
+    # GET - list all users (admin only)
+    path('', UserList.as_view(), name='user-list'),
+
+    # GET/PATCH/DELETE - manage a specific user (admin only)
+    path('<int:pk>/', UserDetail.as_view(), name='user-detail'),
 ]
+
