@@ -31,6 +31,10 @@ export default function Layout() {
                         New Estimate
                     </Link>
 
+                    <Link to="/estimates" style={{ color: '#ccc', textDecoration: 'none' }}>
+                        Estimates
+                    </Link>
+
                     <Link to="/my-clients" style={{ color: '#ccc', textDecoration: 'none' }}>
                         My Clients
                     </Link>

@@ -12,6 +12,7 @@ import NewEstimate from './pages/NewEstimate';
 import MyClients from './pages/MyClients';
 import ManageServices from './pages/ManageServices';
 import ManageUsers from './pages/ManageUsers';
+import EstimateHistory from './pages/EstimateHistory';
 
 export default function App() {
     return (
@@ -34,6 +35,7 @@ export default function App() {
                         <Route path="manager-dashboard" element={<ManagerDashboard />} />
                         <Route path="admin-dashboard" element={<AdminDashboard />} />
                         <Route path="new-estimate" element={<NewEstimate />} />
+                        <Route path="estimates" element={<EstimateHistory />} />
                         <Route path="my-clients" element={<MyClients />} />
                         <Route path="manage-services" element={<ManageServices />} />
                         <Route path="manage-users" element={<ManageUsers />} />
