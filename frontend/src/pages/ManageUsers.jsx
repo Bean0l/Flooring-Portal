@@ -48,84 +48,77 @@ export default function ManageUsers() {
     };
 
     if (loading) {
-        return <p>Loading users...</p>;
+        return (
+            <div className="flex items-center justify-center py-12">
+                <div className="text-gray-500 text-lg">Loading users...</div>
+            </div>
+        );
     }
 
     return (
         <div>
-            <h2>Manage Users</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">Manage Users</h2>
 
             {error && (
-                <p style={{ color: 'red', marginBottom: '10px' }}>{error}</p>
+                <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded mb-4 max-w-3xl">
+                    {error}
+                </div>
             )}
 
             {users.length === 0 ? (
-                <p>No users found.</p>
+                <p className="text-gray-500">No users found.</p>
             ) : (
-                <table style={{
-                    width: '100%',
-                    borderCollapse: 'collapse',
-                    maxWidth: '800px',
-                }}>
-                    <thead>
-                        <tr style={{ backgroundColor: '#f5f5f5', textAlign: 'left' }}>
-                            <th style={{ padding: '10px', borderBottom: '2px solid #ddd' }}>ID</th>
-                            <th style={{ padding: '10px', borderBottom: '2px solid #ddd' }}>Username</th>
-                            <th style={{ padding: '10px', borderBottom: '2px solid #ddd' }}>Email</th>
-                            <th style={{ padding: '10px', borderBottom: '2px solid #ddd' }}>Role</th>
-                            <th style={{ padding: '10px', borderBottom: '2px solid #ddd' }}>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {users.map((u) => (
-                            <tr key={u.id}>
-                                <td style={{ padding: '10px', borderBottom: '1px solid #eee' }}>
-                                    {u.id}
-                                </td>
-                                <td style={{ padding: '10px', borderBottom: '1px solid #eee' }}>
-                                    {u.username}
-                                </td>
-                                <td style={{ padding: '10px', borderBottom: '1px solid #eee' }}>
-                                    {u.email || '-'}
-                                </td>
-                                <td style={{ padding: '10px', borderBottom: '1px solid #eee' }}>
-                                    {u.id === currentUser.id ? (
-                                        <span>{u.role}</span>
-                                    ) : (
-                                        <select
-                                            value={u.role}
-                                            onChange={(e) => handleRoleChange(u.id, e.target.value)}
-                                            style={{ padding: '4px 8px' }}
-                                        >
-                                            <option value="employee">Employee</option>
-                                            <option value="manager">Manager</option>
-                                            <option value="admin">Admin</option>
-                                        </select>
-                                    )}
-                                </td>
-                                <td style={{ padding: '10px', borderBottom: '1px solid #eee' }}>
-                                    {u.id === currentUser.id ? (
-                                        <span style={{ color: '#999' }}>You</span>
-                                    ) : (
-                                        <button
-                                            onClick={() => handleDelete(u.id, u.username)}
-                                            style={{
-                                                padding: '4px 10px',
-                                                backgroundColor: '#ff4444',
-                                                color: 'white',
-                                                border: 'none',
-                                                borderRadius: '4px',
-                                                cursor: 'pointer',
-                                            }}
-                                        >
-                                            Delete
-                                        </button>
-                                    )}
-                                </td>
+                <div className="bg-white rounded-lg shadow overflow-hidden max-w-4xl">
+                    <table className="w-full">
+                        <thead>
+                            <tr className="bg-gray-50 border-b border-gray-200">
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">ID</th>
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Username</th>
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Email</th>
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Role</th>
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Actions</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100">
+                            {users.map((u) => (
+                                <tr key={u.id} className="hover:bg-gray-50 transition">
+                                    <td className="px-6 py-4 text-sm text-gray-600">{u.id}</td>
+                                    <td className="px-6 py-4 text-sm text-gray-800 font-medium">{u.username}</td>
+                                    <td className="px-6 py-4 text-sm text-gray-600">{u.email || '-'}</td>
+                                    <td className="px-6 py-4 text-sm">
+                                        {u.id === currentUser.id ? (
+                                            <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
+                                                {u.role}
+                                            </span>
+                                        ) : (
+                                            <select
+                                                value={u.role}
+                                                onChange={(e) => handleRoleChange(u.id, e.target.value)}
+                                                className="px-2 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                                            >
+                                                <option value="employee">Employee</option>
+                                                <option value="manager">Manager</option>
+                                                <option value="admin">Admin</option>
+                                            </select>
+                                        )}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {u.id === currentUser.id ? (
+                                            <span className="text-sm text-gray-400">You</span>
+                                        ) : (
+                                            <button
+                                                onClick={() => handleDelete(u.id, u.username)}
+                                                className="px-3 py-1 bg-red-100 text-red-700 hover:bg-red-200 rounded text-sm transition cursor-pointer border-none font-medium"
+                                            >
+                                                Delete
+                                            </button>
+                                        )}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             )}
         </div>
     );

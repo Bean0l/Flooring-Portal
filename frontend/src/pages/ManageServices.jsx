@@ -84,28 +84,30 @@ export default function ManageServices() {
     };
 
     if (loading) {
-        return <p>Loading services...</p>;
+        return (
+            <div className="flex items-center justify-center py-12">
+                <div className="text-gray-500 text-lg">Loading services...</div>
+            </div>
+        );
     }
 
     return (
         <div>
-            <h2>Manage Services</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">Manage Services</h2>
 
             {error && (
-                <p style={{ color: 'red', marginBottom: '10px' }}>{error}</p>
+                <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded mb-4 max-w-xl">
+                    {error}
+                </div>
             )}
 
-            <div style={{
-                border: '1px solid #ccc',
-                borderRadius: '8px',
-                padding: '20px',
-                marginBottom: '30px',
-                maxWidth: '500px',
-            }}>
-                <h3>{editingId ? 'Edit Service' : 'Add New Service'}</h3>
+            <div className="bg-white rounded-lg shadow p-6 mb-8 max-w-xl">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                    {editingId ? 'Edit Service' : 'Add New Service'}
+                </h3>
                 <form onSubmit={handleSubmit}>
-                    <div style={{ marginBottom: '10px' }}>
-                        <label style={{ display: 'block', marginBottom: '4px' }}>
+                    <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
                             Service Name
                         </label>
                         <input
@@ -113,30 +115,30 @@ export default function ManageServices() {
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             required
-                            style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
 
-                    <div style={{ marginBottom: '10px' }}>
-                        <label style={{ display: 'block', marginBottom: '4px' }}>
+                    <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
                             Description
                         </label>
                         <textarea
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
                             rows={3}
-                            style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
 
-                    <div style={{ marginBottom: '10px' }}>
-                        <label style={{ display: 'block', marginBottom: '4px' }}>
+                    <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
                             Unit Type
                         </label>
                         <select
                             value={unitOfMeasurement}
                             onChange={(e) => setUnitOfMeasurement(e.target.value)}
-                            style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                         >
                             <option value="sqft">Square Feet</option>
                             <option value="linft">Linear Feet</option>
@@ -144,8 +146,8 @@ export default function ManageServices() {
                         </select>
                     </div>
 
-                    <div style={{ marginBottom: '10px' }}>
-                        <label style={{ display: 'block', marginBottom: '4px' }}>
+                    <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
                             Price Per Unit ($)
                         </label>
                         <input
@@ -155,21 +157,14 @@ export default function ManageServices() {
                             value={pricePerUnit}
                             onChange={(e) => setPricePerUnit(e.target.value)}
                             required
-                            style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
 
-                    <div style={{ display: 'flex', gap: '10px' }}>
+                    <div className="flex gap-3">
                         <button
                             type="submit"
-                            style={{
-                                padding: '8px 16px',
-                                backgroundColor: '#4CAF50',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '4px',
-                                cursor: 'pointer',
-                            }}
+                            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition cursor-pointer border-none font-medium"
                         >
                             {editingId ? 'Update Service' : 'Add Service'}
                         </button>
@@ -178,14 +173,7 @@ export default function ManageServices() {
                             <button
                                 type="button"
                                 onClick={resetForm}
-                                style={{
-                                    padding: '8px 16px',
-                                    backgroundColor: '#888',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '4px',
-                                    cursor: 'pointer',
-                                }}
+                                className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-md transition cursor-pointer border-none font-medium"
                             >
                                 Cancel
                             </button>
@@ -194,68 +182,48 @@ export default function ManageServices() {
                 </form>
             </div>
 
-            <h3>Existing Services</h3>
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">Existing Services</h3>
+
             {services.length === 0 ? (
-                <p>No services yet. Add one above.</p>
+                <p className="text-gray-500">No services yet. Add one above.</p>
             ) : (
-                <table style={{
-                    width: '100%',
-                    borderCollapse: 'collapse',
-                    maxWidth: '800px',
-                }}>
-                    <thead>
-                        <tr style={{ backgroundColor: '#f5f5f5', textAlign: 'left' }}>
-                            <th style={{ padding: '10px', borderBottom: '2px solid #ddd' }}>Name</th>
-                            <th style={{ padding: '10px', borderBottom: '2px solid #ddd' }}>Unit</th>
-                            <th style={{ padding: '10px', borderBottom: '2px solid #ddd' }}>Price</th>
-                            <th style={{ padding: '10px', borderBottom: '2px solid #ddd' }}>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {services.map((service) => (
-                            <tr key={service.id}>
-                                <td style={{ padding: '10px', borderBottom: '1px solid #eee' }}>
-                                    {service.name}
-                                </td>
-                                <td style={{ padding: '10px', borderBottom: '1px solid #eee' }}>
-                                    {service.unit_of_measurement}
-                                </td>
-                                <td style={{ padding: '10px', borderBottom: '1px solid #eee' }}>
-                                    ${service.price_per_unit}
-                                </td>
-                                <td style={{ padding: '10px', borderBottom: '1px solid #eee' }}>
-                                    <button
-                                        onClick={() => handleEdit(service)}
-                                        style={{
-                                            padding: '4px 10px',
-                                            marginRight: '8px',
-                                            backgroundColor: '#2196F3',
-                                            color: 'white',
-                                            border: 'none',
-                                            borderRadius: '4px',
-                                            cursor: 'pointer',
-                                        }}
-                                    >
-                                        Edit
-                                    </button>
-                                    <button
-                                        onClick={() => handleDelete(service.id)}
-                                        style={{
-                                            padding: '4px 10px',
-                                            backgroundColor: '#ff4444',
-                                            color: 'white',
-                                            border: 'none',
-                                            borderRadius: '4px',
-                                            cursor: 'pointer',
-                                        }}
-                                    >
-                                        Delete
-                                    </button>
-                                </td>
+                <div className="bg-white rounded-lg shadow overflow-hidden">
+                    <table className="w-full">
+                        <thead>
+                            <tr className="bg-gray-50 border-b border-gray-200">
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Name</th>
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Unit</th>
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Price</th>
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Actions</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100">
+                            {services.map((service) => (
+                                <tr key={service.id} className="hover:bg-gray-50 transition">
+                                    <td className="px-6 py-4 text-sm text-gray-800">{service.name}</td>
+                                    <td className="px-6 py-4 text-sm text-gray-600">{service.unit_of_measurement}</td>
+                                    <td className="px-6 py-4 text-sm text-gray-800 font-medium">${service.price_per_unit}</td>
+                                    <td className="px-6 py-4">
+                                        <div className="flex gap-2">
+                                            <button
+                                                onClick={() => handleEdit(service)}
+                                                className="px-3 py-1 bg-blue-100 text-blue-700 hover:bg-blue-200 rounded text-sm transition cursor-pointer border-none font-medium"
+                                            >
+                                                Edit
+                                            </button>
+                                            <button
+                                                onClick={() => handleDelete(service.id)}
+                                                className="px-3 py-1 bg-red-100 text-red-700 hover:bg-red-200 rounded text-sm transition cursor-pointer border-none font-medium"
+                                            >
+                                                Delete
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             )}
         </div>
     );

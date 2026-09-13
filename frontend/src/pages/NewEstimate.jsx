@@ -5,21 +5,16 @@ import api from '../api/axios';
 export default function NewEstimate() {
     const navigate = useNavigate();
 
-    // Data fetched on mount
     const [clients, setClients] = useState([]);
     const [services, setServices] = useState([]);
 
-    // Estimate header
     const [selectedClient, setSelectedClient] = useState('');
 
-    // Line item builder inputs
     const [currentService, setCurrentService] = useState('');
     const [currentQuantity, setCurrentQuantity] = useState('');
 
-    // Local line items array (not saved to backend yet)
     const [lineItems, setLineItems] = useState([]);
 
-    // UI state
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [saving, setSaving] = useState(false);
@@ -97,13 +92,11 @@ export default function NewEstimate() {
         setError('');
 
         try {
-            // Phase 1: Create the estimate header
             const estimateRes = await api.post('/estimates/', {
                 client: parseInt(selectedClient),
             });
             const estimateId = estimateRes.data.id;
 
-            // Phase 2: Add each line item to the estimate
             for (const item of lineItems) {
                 await api.post(`/estimates/${estimateId}/line-items/`, {
                     service: item.serviceId,
@@ -118,19 +111,30 @@ export default function NewEstimate() {
         }
     };
 
-    if (loading) return <p>Loading...</p>;
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center py-12">
+                <div className="text-gray-500 text-lg">Loading...</div>
+            </div>
+        );
+    }
 
     return (
         <div>
-            <h2>New Estimate</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">New Estimate</h2>
 
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+            {error && (
+                <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded mb-4 max-w-3xl">
+                    {error}
+                </div>
+            )}
 
-            <div style={{ marginBottom: '20px' }}>
-                <label>Client: </label>
+            <div className="bg-white rounded-lg shadow p-6 mb-6 max-w-3xl">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Client</label>
                 <select
                     value={selectedClient}
                     onChange={(e) => setSelectedClient(e.target.value)}
+                    className="w-full max-w-sm px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                 >
                     <option value="">-- Select a Client --</option>
                     {clients.map(client => (
@@ -141,14 +145,15 @@ export default function NewEstimate() {
                 </select>
             </div>
 
-            <div style={{ marginBottom: '20px', padding: '15px', border: '1px solid #ccc' }}>
-                <h3>Add Line Item</h3>
-                <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-end' }}>
-                    <div>
-                        <label>Service: </label>
+            <div className="bg-white rounded-lg shadow p-6 mb-6 max-w-3xl">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Add Line Item</h3>
+                <div className="flex flex-wrap gap-4 items-end">
+                    <div className="flex-1 min-w-[200px]">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Service</label>
                         <select
                             value={currentService}
                             onChange={(e) => setCurrentService(e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                         >
                             <option value="">-- Select a Service --</option>
                             {services.map(service => (
@@ -158,8 +163,8 @@ export default function NewEstimate() {
                             ))}
                         </select>
                     </div>
-                    <div>
-                        <label>Quantity: </label>
+                    <div className="w-32">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
                         <input
                             type="number"
                             step="0.01"
@@ -167,64 +172,75 @@ export default function NewEstimate() {
                             value={currentQuantity}
                             onChange={(e) => setCurrentQuantity(e.target.value)}
                             placeholder="e.g. 200"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
-                    <button type="button" onClick={handleAddLineItem}>
+                    <button
+                        type="button"
+                        onClick={handleAddLineItem}
+                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition cursor-pointer border-none font-medium"
+                    >
                         Add
                     </button>
                 </div>
             </div>
 
             {lineItems.length > 0 && (
-                <table border="1" cellPadding="8" cellSpacing="0" style={{ width: '100%', marginBottom: '20px' }}>
-                    <thead>
-                        <tr>
-                            <th>Service</th>
-                            <th>Unit</th>
-                            <th>Price/Unit</th>
-                            <th>Quantity</th>
-                            <th>Line Total</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {lineItems.map(item => (
-                            <tr key={item.tempId}>
-                                <td>{item.serviceName}</td>
-                                <td>{item.unit}</td>
-                                <td>${item.pricePerUnit.toFixed(2)}</td>
-                                <td>{item.quantity}</td>
-                                <td>${item.lineTotal.toFixed(2)}</td>
-                                <td>
-                                    <button
-                                        type="button"
-                                        onClick={() => handleRemoveLineItem(item.tempId)}
-                                        style={{ color: 'red' }}
-                                    >
-                                        Remove
-                                    </button>
-                                </td>
+                <div className="bg-white rounded-lg shadow overflow-hidden mb-6 max-w-3xl">
+                    <table className="w-full">
+                        <thead>
+                            <tr className="bg-gray-50 border-b border-gray-200">
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Service</th>
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Unit</th>
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Price/Unit</th>
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Qty</th>
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Line Total</th>
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Actions</th>
                             </tr>
-                        ))}
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colSpan="4" style={{ textAlign: 'right', fontWeight: 'bold' }}>
-                                Estimate Total:
-                            </td>
-                            <td style={{ fontWeight: 'bold' }}>
-                                ${runningTotal.toFixed(2)}
-                            </td>
-                            <td></td>
-                        </tr>
-                    </tfoot>
-                </table>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100">
+                            {lineItems.map(item => (
+                                <tr key={item.tempId} className="hover:bg-gray-50 transition">
+                                    <td className="px-6 py-4 text-sm text-gray-800">{item.serviceName}</td>
+                                    <td className="px-6 py-4 text-sm text-gray-600">{item.unit}</td>
+                                    <td className="px-6 py-4 text-sm text-gray-600">${item.pricePerUnit.toFixed(2)}</td>
+                                    <td className="px-6 py-4 text-sm text-gray-800">{item.quantity}</td>
+                                    <td className="px-6 py-4 text-sm text-gray-800 font-medium">${item.lineTotal.toFixed(2)}</td>
+                                    <td className="px-6 py-4">
+                                        <button
+                                            type="button"
+                                            onClick={() => handleRemoveLineItem(item.tempId)}
+                                            className="px-3 py-1 bg-red-100 text-red-700 hover:bg-red-200 rounded text-sm transition cursor-pointer border-none font-medium"
+                                        >
+                                            Remove
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                        <tfoot>
+                            <tr className="bg-gray-50 border-t border-gray-200">
+                                <td colSpan="4" className="px-6 py-4 text-sm font-bold text-gray-800 text-right">
+                                    Estimate Total:
+                                </td>
+                                <td className="px-6 py-4 text-sm font-bold text-gray-800">
+                                    ${runningTotal.toFixed(2)}
+                                </td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
             )}
 
             <button
                 onClick={handleSave}
                 disabled={saving || lineItems.length === 0 || !selectedClient}
-                style={{ padding: '10px 20px', fontSize: '16px' }}
+                className={`px-6 py-2.5 rounded-md font-medium text-white border-none transition cursor-pointer ${
+                    saving || lineItems.length === 0 || !selectedClient
+                        ? 'bg-gray-400 cursor-not-allowed'
+                        : 'bg-green-600 hover:bg-green-700'
+                }`}
             >
                 {saving ? 'Saving...' : 'Save Estimate'}
             </button>

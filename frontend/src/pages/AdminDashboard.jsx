@@ -1,49 +1,49 @@
 import { useAuth } from '../contexts/AuthContext';
+import { Link } from 'react-router-dom';
 
 export default function AdminDashboard() {
     const { user } = useAuth();
 
     return (
         <div>
-            <h2>Admin Dashboard</h2>
-            <p>Welcome, {user?.username}.</p>
-            <div style={{ marginTop: '20px', display: 'flex', gap: '20px' }}>
-                <div style={{
-                    border: '1px solid #ccc',
-                    borderRadius: '8px',
-                    padding: '20px',
-                    width: '200px',
-                }}>
-                    <h3>All Clients</h3>
-                    <p>0 clients</p>
-                </div>
-                <div style={{
-                    border: '1px solid #ccc',
-                    borderRadius: '8px',
-                    padding: '20px',
-                    width: '200px',
-                }}>
-                    <h3>All Estimates</h3>
-                    <p>0 estimates</p>
-                </div>
-                <div style={{
-                    border: '1px solid #ccc',
-                    borderRadius: '8px',
-                    padding: '20px',
-                    width: '200px',
-                }}>
-                    <h3>Services</h3>
-                    <p>0 services</p>
-                </div>
-                <div style={{
-                    border: '1px solid #ccc',
-                    borderRadius: '8px',
-                    padding: '20px',
-                    width: '200px',
-                }}>
-                    <h3>Users</h3>
-                    <p>0 users</p>
-                </div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-1">Admin Dashboard</h2>
+            <p className="text-gray-500 mb-6">Welcome, {user?.username}.</p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+                <Link to="/my-clients" className="no-underline">
+                    <div className="bg-white rounded-lg shadow p-6 hover:shadow-md transition">
+                        <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide">All Clients</h3>
+                        <p className="text-3xl font-bold text-gray-800 mt-2">View All</p>
+                    </div>
+                </Link>
+
+                <Link to="/estimates" className="no-underline">
+                    <div className="bg-white rounded-lg shadow p-6 hover:shadow-md transition">
+                        <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide">All Estimates</h3>
+                        <p className="text-3xl font-bold text-gray-800 mt-2">View All</p>
+                    </div>
+                </Link>
+
+                <Link to="/manage-services" className="no-underline">
+                    <div className="bg-white rounded-lg shadow p-6 hover:shadow-md transition">
+                        <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide">Services</h3>
+                        <p className="text-3xl font-bold text-gray-800 mt-2">Manage</p>
+                    </div>
+                </Link>
+
+                <Link to="/manage-users" className="no-underline">
+                    <div className="bg-white rounded-lg shadow p-6 hover:shadow-md transition">
+                        <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide">Users</h3>
+                        <p className="text-3xl font-bold text-gray-800 mt-2">Manage</p>
+                    </div>
+                </Link>
+
+                <Link to="/new-estimate" className="no-underline">
+                    <div className="bg-white rounded-lg shadow p-6 border-l-4 border-blue-600 hover:shadow-md transition">
+                        <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide">Quick Action</h3>
+                        <p className="text-3xl font-bold text-blue-600 mt-2">+ New Estimate</p>
+                    </div>
+                </Link>
             </div>
         </div>
     );

@@ -95,28 +95,30 @@ export default function MyClients() {
     const canDelete = user?.role === 'manager' || user?.role === 'admin';
 
     if (loading) {
-        return <p>Loading clients...</p>;
+        return (
+            <div className="flex items-center justify-center py-12">
+                <div className="text-gray-500 text-lg">Loading clients...</div>
+            </div>
+        );
     }
 
     return (
         <div>
-            <h2>My Clients</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">My Clients</h2>
 
             {error && (
-                <p style={{ color: 'red', marginBottom: '10px' }}>{error}</p>
+                <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded mb-4 max-w-xl">
+                    {error}
+                </div>
             )}
 
-            <div style={{
-                border: '1px solid #ccc',
-                borderRadius: '8px',
-                padding: '20px',
-                marginBottom: '30px',
-                maxWidth: '500px',
-            }}>
-                <h3>{editingId ? 'Edit Client' : 'Add New Client'}</h3>
+            <div className="bg-white rounded-lg shadow p-6 mb-8 max-w-xl">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                    {editingId ? 'Edit Client' : 'Add New Client'}
+                </h3>
                 <form onSubmit={handleSubmit}>
-                    <div style={{ marginBottom: '10px' }}>
-                        <label style={{ display: 'block', marginBottom: '4px' }}>
+                    <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
                             Client Name
                         </label>
                         <input
@@ -124,57 +126,50 @@ export default function MyClients() {
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             required
-                            style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
 
-                    <div style={{ marginBottom: '10px' }}>
-                        <label style={{ display: 'block', marginBottom: '4px' }}>
+                    <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
                             Phone
                         </label>
                         <input
                             type="text"
                             value={phone}
                             onChange={(e) => setPhone(e.target.value)}
-                            style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
 
-                    <div style={{ marginBottom: '10px' }}>
-                        <label style={{ display: 'block', marginBottom: '4px' }}>
+                    <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
                             Email
                         </label>
                         <input
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
 
-                    <div style={{ marginBottom: '10px' }}>
-                        <label style={{ display: 'block', marginBottom: '4px' }}>
+                    <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
                             Address
                         </label>
                         <textarea
                             value={address}
                             onChange={(e) => setAddress(e.target.value)}
                             rows={2}
-                            style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
 
-                    <div style={{ display: 'flex', gap: '10px' }}>
+                    <div className="flex gap-3">
                         <button
                             type="submit"
-                            style={{
-                                padding: '8px 16px',
-                                backgroundColor: '#4CAF50',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '4px',
-                                cursor: 'pointer',
-                            }}
+                            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition cursor-pointer border-none font-medium"
                         >
                             {editingId ? 'Update Client' : 'Add Client'}
                         </button>
@@ -183,14 +178,7 @@ export default function MyClients() {
                             <button
                                 type="button"
                                 onClick={resetForm}
-                                style={{
-                                    padding: '8px 16px',
-                                    backgroundColor: '#888',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '4px',
-                                    cursor: 'pointer',
-                                }}
+                                className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-md transition cursor-pointer border-none font-medium"
                             >
                                 Cancel
                             </button>
@@ -199,88 +187,65 @@ export default function MyClients() {
                 </form>
             </div>
 
-            <h3>Client List</h3>
-
-            <div style={{ marginBottom: '15px', maxWidth: '400px' }}>
+            <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-800">Client List</h3>
                 <input
                     type="text"
-                    placeholder="Search by name, phone, email, or address..."
+                    placeholder="Search clients..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
+                    className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-64"
                 />
             </div>
 
             {filteredClients.length === 0 ? (
-                <p>
+                <p className="text-gray-500">
                     {clients.length === 0
                         ? 'No clients yet. Add one above.'
                         : 'No clients match your search.'}
                 </p>
             ) : (
-                <table style={{
-                    width: '100%',
-                    borderCollapse: 'collapse',
-                }}>
-                    <thead>
-                        <tr style={{ backgroundColor: '#f5f5f5', textAlign: 'left' }}>
-                            <th style={{ padding: '10px', borderBottom: '2px solid #ddd' }}>Name</th>
-                            <th style={{ padding: '10px', borderBottom: '2px solid #ddd' }}>Phone</th>
-                            <th style={{ padding: '10px', borderBottom: '2px solid #ddd' }}>Email</th>
-                            <th style={{ padding: '10px', borderBottom: '2px solid #ddd' }}>Added By</th>
-                            <th style={{ padding: '10px', borderBottom: '2px solid #ddd' }}>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filteredClients.map((client) => (
-                            <tr key={client.id}>
-                                <td style={{ padding: '10px', borderBottom: '1px solid #eee' }}>
-                                    {client.name}
-                                </td>
-                                <td style={{ padding: '10px', borderBottom: '1px solid #eee' }}>
-                                    {client.phone || '-'}
-                                </td>
-                                <td style={{ padding: '10px', borderBottom: '1px solid #eee' }}>
-                                    {client.email || '-'}
-                                </td>
-                                <td style={{ padding: '10px', borderBottom: '1px solid #eee' }}>
-                                    {client.created_by}
-                                </td>
-                                <td style={{ padding: '10px', borderBottom: '1px solid #eee' }}>
-                                    <button
-                                        onClick={() => handleEdit(client)}
-                                        style={{
-                                            padding: '4px 10px',
-                                            marginRight: '8px',
-                                            backgroundColor: '#2196F3',
-                                            color: 'white',
-                                            border: 'none',
-                                            borderRadius: '4px',
-                                            cursor: 'pointer',
-                                        }}
-                                    >
-                                        Edit
-                                    </button>
-                                    {canDelete && (
-                                        <button
-                                            onClick={() => handleDelete(client.id)}
-                                            style={{
-                                                padding: '4px 10px',
-                                                backgroundColor: '#ff4444',
-                                                color: 'white',
-                                                border: 'none',
-                                                borderRadius: '4px',
-                                                cursor: 'pointer',
-                                            }}
-                                        >
-                                            Delete
-                                        </button>
-                                    )}
-                                </td>
+                <div className="bg-white rounded-lg shadow overflow-hidden">
+                    <table className="w-full">
+                        <thead>
+                            <tr className="bg-gray-50 border-b border-gray-200">
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Name</th>
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Phone</th>
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Email</th>
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Added By</th>
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Actions</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100">
+                            {filteredClients.map((client) => (
+                                <tr key={client.id} className="hover:bg-gray-50 transition">
+                                    <td className="px-6 py-4 text-sm text-gray-800 font-medium">{client.name}</td>
+                                    <td className="px-6 py-4 text-sm text-gray-600">{client.phone || '-'}</td>
+                                    <td className="px-6 py-4 text-sm text-gray-600">{client.email || '-'}</td>
+                                    <td className="px-6 py-4 text-sm text-gray-600">{client.created_by}</td>
+                                    <td className="px-6 py-4">
+                                        <div className="flex gap-2">
+                                            <button
+                                                onClick={() => handleEdit(client)}
+                                                className="px-3 py-1 bg-blue-100 text-blue-700 hover:bg-blue-200 rounded text-sm transition cursor-pointer border-none font-medium"
+                                            >
+                                                Edit
+                                            </button>
+                                            {canDelete && (
+                                                <button
+                                                    onClick={() => handleDelete(client.id)}
+                                                    className="px-3 py-1 bg-red-100 text-red-700 hover:bg-red-200 rounded text-sm transition cursor-pointer border-none font-medium"
+                                                >
+                                                    Delete
+                                                </button>
+                                            )}
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             )}
         </div>
     );
