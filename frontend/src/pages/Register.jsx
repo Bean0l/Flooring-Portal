@@ -7,21 +7,61 @@ export default function Register() {
         username: '',
         email: '',
         password: '',
+        confirmPassword: '',
         phone: '',
         role: 'employee',
     });
     const [error, setError] = useState('');
+    const [fieldErrors, setFieldErrors] = useState({});
     const navigate = useNavigate();
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
+        setFieldErrors({ ...fieldErrors, [e.target.name]: '' });
+    };
+
+    const validate = () => {
+        const errors = {};
+
+        if (!formData.username.trim()) {
+            errors.username = 'Username is required.';
+        }
+
+        if (!formData.email.trim()) {
+            errors.email = 'Email is required.';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+            errors.email = 'Enter a valid email address.';
+        }
+
+        if (!formData.password) {
+            errors.password = 'Password is required.';
+        } else if (formData.password.length < 6) {
+            errors.password = 'Password must be at least 6 characters.';
+        }
+
+        if (!formData.confirmPassword) {
+            errors.confirmPassword = 'Please confirm your password.';
+        } else if (formData.password !== formData.confirmPassword) {
+            errors.confirmPassword = 'Passwords do not match.';
+        }
+
+        if (formData.phone && !/^\d{10}$/.test(formData.phone.replace(/\D/g, ''))) {
+            errors.phone = 'Phone must be 10 digits.';
+        }
+
+        setFieldErrors(errors);
+        return Object.keys(errors).length === 0;
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+
+        if (!validate()) return;
+
         try {
-            await API.post('/users/register/', formData);
+            const { confirmPassword, ...submitData } = formData;
+            await API.post('/users/register/', submitData);
             navigate('/login');
         } catch (err) {
             if (err.response && err.response.data) {
@@ -54,8 +94,13 @@ export default function Register() {
                             name="username"
                             value={formData.username}
                             onChange={handleChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                                fieldErrors.username ? 'border-red-500' : 'border-gray-300'
+                            }`}
                         />
+                        {fieldErrors.username && (
+                            <p className="text-red-600 text-sm mt-1">{fieldErrors.username}</p>
+                        )}
                     </div>
 
                     <div className="mb-4">
@@ -67,8 +112,13 @@ export default function Register() {
                             name="email"
                             value={formData.email}
                             onChange={handleChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                                fieldErrors.email ? 'border-red-500' : 'border-gray-300'
+                            }`}
                         />
+                        {fieldErrors.email && (
+                            <p className="text-red-600 text-sm mt-1">{fieldErrors.email}</p>
+                        )}
                     </div>
 
                     <div className="mb-4">
@@ -80,8 +130,31 @@ export default function Register() {
                             name="password"
                             value={formData.password}
                             onChange={handleChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                                fieldErrors.password ? 'border-red-500' : 'border-gray-300'
+                            }`}
                         />
+                        {fieldErrors.password && (
+                            <p className="text-red-600 text-sm mt-1">{fieldErrors.password}</p>
+                        )}
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Confirm Password
+                        </label>
+                        <input
+                            type="password"
+                            name="confirmPassword"
+                            value={formData.confirmPassword}
+                            onChange={handleChange}
+                            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                                fieldErrors.confirmPassword ? 'border-red-500' : 'border-gray-300'
+                            }`}
+                        />
+                        {fieldErrors.confirmPassword && (
+                            <p className="text-red-600 text-sm mt-1">{fieldErrors.confirmPassword}</p>
+                        )}
                     </div>
 
                     <div className="mb-4">
@@ -93,8 +166,13 @@ export default function Register() {
                             name="phone"
                             value={formData.phone}
                             onChange={handleChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                                fieldErrors.phone ? 'border-red-500' : 'border-gray-300'
+                            }`}
                         />
+                        {fieldErrors.phone && (
+                            <p className="text-red-600 text-sm mt-1">{fieldErrors.phone}</p>
+                        )}
                     </div>
 
                     <div className="mb-6">

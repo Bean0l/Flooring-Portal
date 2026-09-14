@@ -13,6 +13,8 @@ export default function ManageServices() {
 
     const [editingId, setEditingId] = useState(null);
 
+    const [fieldErrors, setFieldErrors] = useState({});
+
     const fetchServices = async () => {
         try {
             const response = await api.get('/services/');
@@ -35,11 +37,31 @@ export default function ManageServices() {
         setPricePerUnit('');
         setEditingId(null);
         setError('');
+        setFieldErrors({});
+    };
+
+    const validate = () => {
+        const errors = {};
+
+        if (!name.trim()) {
+            errors.name = 'Service name is required.';
+        }
+
+        if (!pricePerUnit) {
+            errors.pricePerUnit = 'Price is required.';
+        } else if (parseFloat(pricePerUnit) <= 0) {
+            errors.pricePerUnit = 'Price must be greater than zero.';
+        }
+
+        setFieldErrors(errors);
+        return Object.keys(errors).length === 0;
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+
+        if (!validate()) return;
 
         const payload = {
             name,
@@ -113,10 +135,17 @@ export default function ManageServices() {
                         <input
                             type="text"
                             value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            required
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            onChange={(e) => {
+                                setName(e.target.value);
+                                setFieldErrors({ ...fieldErrors, name: '' });
+                            }}
+                            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                                fieldErrors.name ? 'border-red-500' : 'border-gray-300'
+                            }`}
                         />
+                        {fieldErrors.name && (
+                            <p className="text-red-600 text-sm mt-1">{fieldErrors.name}</p>
+                        )}
                     </div>
 
                     <div className="mb-4">
@@ -155,10 +184,17 @@ export default function ManageServices() {
                             step="0.01"
                             min="0"
                             value={pricePerUnit}
-                            onChange={(e) => setPricePerUnit(e.target.value)}
-                            required
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            onChange={(e) => {
+                                setPricePerUnit(e.target.value);
+                                setFieldErrors({ ...fieldErrors, pricePerUnit: '' });
+                            }}
+                            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                                fieldErrors.pricePerUnit ? 'border-red-500' : 'border-gray-300'
+                            }`}
                         />
+                        {fieldErrors.pricePerUnit && (
+                            <p className="text-red-600 text-sm mt-1">{fieldErrors.pricePerUnit}</p>
+                        )}
                     </div>
 
                     <div className="flex gap-3">

@@ -6,12 +6,31 @@ export default function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [fieldErrors, setFieldErrors] = useState({});
     const { login } = useAuth();
     const navigate = useNavigate();
+
+    const validate = () => {
+        const errors = {};
+
+        if (!username.trim()) {
+            errors.username = 'Username is required.';
+        }
+
+        if (!password) {
+            errors.password = 'Password is required.';
+        }
+
+        setFieldErrors(errors);
+        return Object.keys(errors).length === 0;
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+
+        if (!validate()) return;
+
         try {
             await login(username, password);
             navigate('/dashboard');
@@ -39,9 +58,17 @@ export default function Login() {
                         <input
                             type="text"
                             value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            onChange={(e) => {
+                                setUsername(e.target.value);
+                                setFieldErrors({ ...fieldErrors, username: '' });
+                            }}
+                            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                                fieldErrors.username ? 'border-red-500' : 'border-gray-300'
+                            }`}
                         />
+                        {fieldErrors.username && (
+                            <p className="text-red-600 text-sm mt-1">{fieldErrors.username}</p>
+                        )}
                     </div>
 
                     <div className="mb-6">
@@ -51,9 +78,17 @@ export default function Login() {
                         <input
                             type="password"
                             value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            onChange={(e) => {
+                                setPassword(e.target.value);
+                                setFieldErrors({ ...fieldErrors, password: '' });
+                            }}
+                            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                                fieldErrors.password ? 'border-red-500' : 'border-gray-300'
+                            }`}
                         />
+                        {fieldErrors.password && (
+                            <p className="text-red-600 text-sm mt-1">{fieldErrors.password}</p>
+                        )}
                     </div>
 
                     <button

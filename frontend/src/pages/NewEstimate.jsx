@@ -19,6 +19,8 @@ export default function NewEstimate() {
     const [error, setError] = useState('');
     const [saving, setSaving] = useState(false);
 
+    const [fieldErrors, setFieldErrors] = useState({});
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -38,20 +40,30 @@ export default function NewEstimate() {
     }, []);
 
     const handleAddLineItem = () => {
-        if (!currentService || !currentQuantity) {
-            setError('Select a service and enter a quantity.');
-            return;
+        const errors = {};
+
+        if (!currentService) {
+            errors.service = 'Select a service.';
         }
 
-        const qty = parseFloat(currentQuantity);
-        if (isNaN(qty) || qty <= 0) {
-            setError('Quantity must be a positive number.');
+        if (!currentQuantity) {
+            errors.quantity = 'Quantity is required.';
+        } else {
+            const qty = parseFloat(currentQuantity);
+            if (isNaN(qty) || qty <= 0) {
+                errors.quantity = 'Quantity must be a positive number.';
+            }
+        }
+
+        if (Object.keys(errors).length > 0) {
+            setFieldErrors(errors);
             return;
         }
 
         const service = services.find(s => s.id === parseInt(currentService));
         if (!service) return;
 
+        const qty = parseFloat(currentQuantity);
         const lineTotal = qty * parseFloat(service.price_per_unit);
 
         setLineItems([
@@ -70,6 +82,7 @@ export default function NewEstimate() {
         setCurrentService('');
         setCurrentQuantity('');
         setError('');
+        setFieldErrors({});
     };
 
     const handleRemoveLineItem = (tempId) => {
@@ -79,17 +92,26 @@ export default function NewEstimate() {
     const runningTotal = lineItems.reduce((sum, item) => sum + item.lineTotal, 0);
 
     const handleSave = async () => {
+        const errors = {};
+
         if (!selectedClient) {
-            setError('Select a client.');
-            return;
+            errors.client = 'Select a client.';
         }
+
         if (lineItems.length === 0) {
             setError('Add at least one line item.');
+            setFieldErrors(errors);
+            return;
+        }
+
+        if (Object.keys(errors).length > 0) {
+            setFieldErrors(errors);
             return;
         }
 
         setSaving(true);
         setError('');
+        setFieldErrors({});
 
         try {
             const estimateRes = await api.post('/estimates/', {
@@ -133,8 +155,13 @@ export default function NewEstimate() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Client</label>
                 <select
                     value={selectedClient}
-                    onChange={(e) => setSelectedClient(e.target.value)}
-                    className="w-full max-w-sm px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                    onChange={(e) => {
+                        setSelectedClient(e.target.value);
+                        setFieldErrors({ ...fieldErrors, client: '' });
+                    }}
+                    className={`w-full max-w-sm px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white ${
+                        fieldErrors.client ? 'border-red-500' : 'border-gray-300'
+                    }`}
                 >
                     <option value="">-- Select a Client --</option>
                     {clients.map(client => (
@@ -143,17 +170,25 @@ export default function NewEstimate() {
                         </option>
                     ))}
                 </select>
+                {fieldErrors.client && (
+                    <p className="text-red-600 text-sm mt-1">{fieldErrors.client}</p>
+                )}
             </div>
 
             <div className="bg-white rounded-lg shadow p-6 mb-6 max-w-3xl">
                 <h3 className="text-lg font-semibold text-gray-800 mb-4">Add Line Item</h3>
-                <div className="flex flex-wrap gap-4 items-end">
+                <div className="flex flex-wrap gap-4 items-start">
                     <div className="flex-1 min-w-[200px]">
                         <label className="block text-sm font-medium text-gray-700 mb-1">Service</label>
                         <select
                             value={currentService}
-                            onChange={(e) => setCurrentService(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                            onChange={(e) => {
+                                setCurrentService(e.target.value);
+                                setFieldErrors({ ...fieldErrors, service: '' });
+                            }}
+                            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white ${
+                                fieldErrors.service ? 'border-red-500' : 'border-gray-300'
+                            }`}
                         >
                             <option value="">-- Select a Service --</option>
                             {services.map(service => (
@@ -162,6 +197,9 @@ export default function NewEstimate() {
                                 </option>
                             ))}
                         </select>
+                        {fieldErrors.service && (
+                            <p className="text-red-600 text-sm mt-1">{fieldErrors.service}</p>
+                        )}
                     </div>
                     <div className="w-32">
                         <label className="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
@@ -170,15 +208,23 @@ export default function NewEstimate() {
                             step="0.01"
                             min="0.01"
                             value={currentQuantity}
-                            onChange={(e) => setCurrentQuantity(e.target.value)}
+                            onChange={(e) => {
+                                setCurrentQuantity(e.target.value);
+                                setFieldErrors({ ...fieldErrors, quantity: '' });
+                            }}
                             placeholder="e.g. 200"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                                fieldErrors.quantity ? 'border-red-500' : 'border-gray-300'
+                            }`}
                         />
+                        {fieldErrors.quantity && (
+                            <p className="text-red-600 text-sm mt-1">{fieldErrors.quantity}</p>
+                        )}
                     </div>
                     <button
                         type="button"
                         onClick={handleAddLineItem}
-                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition cursor-pointer border-none font-medium"
+                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition cursor-pointer border-none font-medium mt-6"
                     >
                         Add
                     </button>

@@ -16,6 +16,7 @@ export default function MyClients() {
     const [address, setAddress] = useState('');
 
     const [editingId, setEditingId] = useState(null);
+    const [fieldErrors, setFieldErrors] = useState({});
 
     const fetchClients = async () => {
         try {
@@ -39,11 +40,33 @@ export default function MyClients() {
         setAddress('');
         setEditingId(null);
         setError('');
+        setFieldErrors({});
+    };
+
+    const validate = () => {
+        const errors = {};
+
+        if (!name.trim()) {
+            errors.name = 'Client name is required.';
+        }
+
+        if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            errors.email = 'Enter a valid email address.';
+        }
+
+        if (phone && !/^\d{10}$/.test(phone.replace(/\D/g, ''))) {
+            errors.phone = 'Phone must be 10 digits.';
+        }
+
+        setFieldErrors(errors);
+        return Object.keys(errors).length === 0;
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+
+        if (!validate()) return;
 
         const payload = { name, phone, email, address };
 
@@ -124,10 +147,17 @@ export default function MyClients() {
                         <input
                             type="text"
                             value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            required
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            onChange={(e) => {
+                                setName(e.target.value);
+                                setFieldErrors({ ...fieldErrors, name: '' });
+                            }}
+                            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                                fieldErrors.name ? 'border-red-500' : 'border-gray-300'
+                            }`}
                         />
+                        {fieldErrors.name && (
+                            <p className="text-red-600 text-sm mt-1">{fieldErrors.name}</p>
+                        )}
                     </div>
 
                     <div className="mb-4">
@@ -137,9 +167,17 @@ export default function MyClients() {
                         <input
                             type="text"
                             value={phone}
-                            onChange={(e) => setPhone(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            onChange={(e) => {
+                                setPhone(e.target.value);
+                                setFieldErrors({ ...fieldErrors, phone: '' });
+                            }}
+                            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                                fieldErrors.phone ? 'border-red-500' : 'border-gray-300'
+                            }`}
                         />
+                        {fieldErrors.phone && (
+                            <p className="text-red-600 text-sm mt-1">{fieldErrors.phone}</p>
+                        )}
                     </div>
 
                     <div className="mb-4">
@@ -149,9 +187,17 @@ export default function MyClients() {
                         <input
                             type="email"
                             value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            onChange={(e) => {
+                                setEmail(e.target.value);
+                                setFieldErrors({ ...fieldErrors, email: '' });
+                            }}
+                            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                                fieldErrors.email ? 'border-red-500' : 'border-gray-300'
+                            }`}
                         />
+                        {fieldErrors.email && (
+                            <p className="text-red-600 text-sm mt-1">{fieldErrors.email}</p>
+                        )}
                     </div>
 
                     <div className="mb-4">
