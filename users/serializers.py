@@ -14,6 +14,17 @@ class RegisterSerializer(serializers.ModelSerializer):
         fields = ('id', 'username', 'email', 'password', 'role', 'phone')
         read_only_fields = ('id',)
 
+    def validate_email(self, value):
+        if value and '@' not in value:
+            raise serializers.ValidationError("Enter a valid email address.")
+        return value
+
+    def validate_phone(self, value):
+        import re
+        if value and not re.match(r'^\d{10}$', re.sub(r'\D', '', value)):
+            raise serializers.ValidationError("Phone must be 10 digits.")
+        return value
+
     # Takes the validated data and creates a new user in the DB
     def create(self, validated_data):
         user = User.objects.create_user(

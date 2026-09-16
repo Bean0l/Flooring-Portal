@@ -25,6 +25,11 @@ class EstimateLineItemSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Quantity must be greater than zero.")
         return value
 
+    def validate_service(self, value):
+        if not value:
+            raise serializers.ValidationError("Service is required.")
+        return value
+
 
 class EstimateSerializer(serializers.ModelSerializer):
     created_by = serializers.ReadOnlyField(source='created_by.username')
@@ -47,6 +52,16 @@ class EstimateSerializer(serializers.ModelSerializer):
         )
         read_only_fields = ('id', 'created_by', 'created_at', 'updated_at')
 
+    def validate_client(self, value):
+        if not value:
+            raise serializers.ValidationError("Client is required.")
+        return value
+
+    def validate_status(self, value):
+        allowed = [choice[0] for choice in Estimate.STATUS_CHOICES]
+        if value not in allowed:
+            raise serializers.ValidationError(f"Status must be one of: {', '.join(allowed)}.")
+        return value
+
     def get_estimate_total(self, obj):
         return sum(item.line_total for item in obj.line_items.all())
-
