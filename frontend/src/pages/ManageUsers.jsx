@@ -7,6 +7,8 @@ export default function ManageUsers() {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [searchTerm, setSearchTerm] = useState('');
+    const [roleFilter, setRoleFilter] = useState('');
 
     const fetchUsers = async () => {
         try {
@@ -22,6 +24,18 @@ export default function ManageUsers() {
     useEffect(() => {
         fetchUsers();
     }, []);
+
+    const filteredUsers = users.filter((u) => {
+        const term = searchTerm.toLowerCase();
+        const matchesSearch =
+            u.username.toLowerCase().includes(term) ||
+            (u.email && u.email.toLowerCase().includes(term)) ||
+            u.role.toLowerCase().includes(term);
+
+        const matchesRole = roleFilter === '' || u.role === roleFilter;
+
+        return matchesSearch && matchesRole;
+    });
 
     const handleRoleChange = async (userId, newRole) => {
         setError('');
@@ -65,6 +79,26 @@ export default function ManageUsers() {
                 </div>
             )}
 
+            <div className="flex gap-4 mb-4 max-w-4xl">
+                <input
+                    type="text"
+                    placeholder="Search by username, email, or role..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <select
+                    value={roleFilter}
+                    onChange={(e) => setRoleFilter(e.target.value)}
+                    className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                >
+                    <option value="">All Roles</option>
+                    <option value="employee">Employee</option>
+                    <option value="manager">Manager</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+
             {users.length === 0 ? (
                 <p className="text-gray-500">No users found.</p>
             ) : (
@@ -80,7 +114,7 @@ export default function ManageUsers() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
-                            {users.map((u) => (
+                            {filteredUsers.map((u) => (
                                 <tr key={u.id} className="hover:bg-gray-50 transition">
                                     <td className="px-6 py-4 text-sm text-gray-600">{u.id}</td>
                                     <td className="px-6 py-4 text-sm text-gray-800 font-medium">{u.username}</td>

@@ -15,6 +15,8 @@ export default function ManageServices() {
 
     const [fieldErrors, setFieldErrors] = useState({});
 
+    const [searchTerm, setSearchTerm] = useState('');
+
     const fetchServices = async () => {
         try {
             const response = await api.get('/services/');
@@ -29,6 +31,15 @@ export default function ManageServices() {
     useEffect(() => {
         fetchServices();
     }, []);
+
+    const filteredServices = services.filter((service) => {
+        const term = searchTerm.toLowerCase();
+        return (
+            service.name.toLowerCase().includes(term) ||
+            service.description.toLowerCase().includes(term) ||
+            service.unit_of_measurement.toLowerCase().includes(term)
+        );
+    });
 
     const resetForm = () => {
         setName('');
@@ -247,6 +258,16 @@ export default function ManageServices() {
 
             <h3 className="text-lg font-semibold text-gray-800 mb-4">Existing Services</h3>
 
+            <div className="mb-4">
+                <input
+                    type="text"
+                    placeholder="Search services..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+            </div>
+
             {services.length === 0 ? (
                 <p className="text-gray-500">No services yet. Add one above.</p>
             ) : (
@@ -261,7 +282,7 @@ export default function ManageServices() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
-                            {services.map((service) => (
+                            {filteredServices.map((service) => (
                                 <tr key={service.id} className="hover:bg-gray-50 transition">
                                     <td className="px-6 py-4 text-sm text-gray-800">{service.name}</td>
                                     <td className="px-6 py-4 text-sm text-gray-600">{service.unit_of_measurement}</td>

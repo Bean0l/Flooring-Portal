@@ -6,6 +6,8 @@ export default function EstimateHistory() {
     const [estimates, setEstimates] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [searchTerm, setSearchTerm] = useState('');
+    const [statusFilter, setStatusFilter] = useState('');
 
     const fetchEstimates = async () => {
         try {
@@ -21,6 +23,18 @@ export default function EstimateHistory() {
     useEffect(() => {
         fetchEstimates();
     }, []);
+
+    const filteredEstimates = estimates.filter((est) => {
+        const term = searchTerm.toLowerCase();
+        const matchesSearch =
+            est.client_name.toLowerCase().includes(term) ||
+            String(est.id).includes(term) ||
+            est.status.toLowerCase().includes(term);
+
+        const matchesStatus = statusFilter === '' || est.status === statusFilter;
+
+        return matchesSearch && matchesStatus;
+    });
 
     if (loading) {
         return (
@@ -48,6 +62,26 @@ export default function EstimateHistory() {
                 </div>
             )}
 
+            <div className="flex gap-4 mb-4">
+                <input
+                    type="text"
+                    placeholder="Search by client, ID, or status..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <select
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value)}
+                    className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                >
+                    <option value="">All Statuses</option>
+                    <option value="draft">Draft</option>
+                    <option value="sent">Sent</option>
+                    <option value="approved">Approved</option>
+                </select>
+            </div>
+
             {estimates.length === 0 ? (
                 <p className="text-gray-500">No estimates yet.</p>
             ) : (
@@ -64,7 +98,7 @@ export default function EstimateHistory() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
-                            {estimates.map(est => (
+                            {filteredEstimates.map(est => (
                                 <tr key={est.id} className="hover:bg-gray-50 transition">
                                     <td className="px-6 py-4 text-sm">
                                         <Link to={`/estimates/${est.id}`} className="text-blue-600 hover:text-blue-800 font-medium">
