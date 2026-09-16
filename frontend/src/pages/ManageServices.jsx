@@ -79,7 +79,34 @@ export default function ManageServices() {
             resetForm();
             fetchServices();
         } catch (err) {
-            setError('Failed to save service. Check your inputs.');
+            if (err.response && err.response.data) {
+                const data = err.response.data;
+                const newFieldErrors = {};
+                const generalErrors = [];
+
+                const keyMap = {
+                    name: 'name',
+                    description: 'description',
+                    unit_of_measurement: 'unitOfMeasurement',
+                    price_per_unit: 'pricePerUnit',
+                };
+
+                Object.entries(data).forEach(([key, value]) => {
+                    const message = Array.isArray(value) ? value.join(' ') : value;
+                    if (keyMap[key]) {
+                        newFieldErrors[keyMap[key]] = message;
+                    } else {
+                        generalErrors.push(message);
+                    }
+                });
+
+                setFieldErrors(prev => ({ ...prev, ...newFieldErrors }));
+                if (generalErrors.length > 0) {
+                    setError(generalErrors.join(' '));
+                }
+            } else {
+                setError('Failed to save service.');
+            }
         }
     };
 

@@ -128,7 +128,29 @@ export default function NewEstimate() {
 
             navigate('/estimates');
         } catch (err) {
-            setError('Failed to save estimate. Check your inputs.');
+            if (err.response && err.response.data) {
+                const data = err.response.data;
+                const newFieldErrors = {};
+                const generalErrors = [];
+
+                Object.entries(data).forEach(([key, value]) => {
+                    const message = Array.isArray(value) ? value.join(' ') : value;
+                    if (key === 'client') {
+                        newFieldErrors.client = message;
+                    } else if (key === 'service' || key === 'quantity') {
+                        generalErrors.push(`${key}: ${message}`);
+                    } else {
+                        generalErrors.push(message);
+                    }
+                });
+
+                setFieldErrors(prev => ({ ...prev, ...newFieldErrors }));
+                if (generalErrors.length > 0) {
+                    setError(generalErrors.join(' '));
+                }
+            } else {
+                setError('Failed to save estimate.');
+            }
             setSaving(false);
         }
     };

@@ -35,7 +35,11 @@ export default function Login() {
             await login(username, password);
             navigate('/dashboard');
         } catch (err) {
-            setError('Invalid username or password');
+            if (err.response && err.response.data && err.response.data.detail) {
+                setError(err.response.data.detail);
+            } else {
+                setError('Invalid username or password.');
+            }
         }
     };
 

@@ -65,10 +65,25 @@ export default function Register() {
             navigate('/login');
         } catch (err) {
             if (err.response && err.response.data) {
-                const messages = Object.values(err.response.data).flat().join(' ');
-                setError(messages);
+                const data = err.response.data;
+                const newFieldErrors = {};
+                const generalErrors = [];
+
+                Object.entries(data).forEach(([key, value]) => {
+                    const message = Array.isArray(value) ? value.join(' ') : value;
+                    if (['username', 'email', 'password', 'phone', 'role'].includes(key)) {
+                        newFieldErrors[key] = message;
+                    } else {
+                        generalErrors.push(message);
+                    }
+                });
+
+                setFieldErrors(prev => ({ ...prev, ...newFieldErrors }));
+                if (generalErrors.length > 0) {
+                    setError(generalErrors.join(' '));
+                }
             } else {
-                setError('Registration failed');
+                setError('Registration failed.');
             }
         }
     };

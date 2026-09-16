@@ -79,7 +79,27 @@ export default function MyClients() {
             resetForm();
             fetchClients();
         } catch (err) {
-            setError('Failed to save client. Check your inputs.');
+            if (err.response && err.response.data) {
+                const data = err.response.data;
+                const newFieldErrors = {};
+                const generalErrors = [];
+
+                Object.entries(data).forEach(([key, value]) => {
+                    const message = Array.isArray(value) ? value.join(' ') : value;
+                    if (['name', 'phone', 'email', 'address'].includes(key)) {
+                        newFieldErrors[key] = message;
+                    } else {
+                        generalErrors.push(message);
+                    }
+                });
+
+                setFieldErrors(prev => ({ ...prev, ...newFieldErrors }));
+                if (generalErrors.length > 0) {
+                    setError(generalErrors.join(' '));
+                }
+            } else {
+                setError('Failed to save client.');
+            }
         }
     };
 
